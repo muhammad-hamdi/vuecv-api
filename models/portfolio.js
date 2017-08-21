@@ -17,6 +17,6 @@ const WorkSchema = new Schema({
   }
 });
 
-const Work = mongoose.module('work', SkillSchema);
+const Work = mongoose.model('work', WorkSchema);
 
 module.exports = Work;

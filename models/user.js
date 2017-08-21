@@ -13,15 +13,15 @@ const UserSchema = new Schema({
   },
   title: {
     type: String,
-    required: true
+    required: false
   },
   Age: {
     type: Number,
-    required: true
+    required: false
   },
   description: {
     type: String,
-    required: true
+    required: false
   },
   admin: {
     type: Boolean,
@@ -29,6 +29,6 @@ const UserSchema = new Schema({
   }
 });
 
-const User = mongoose.module('user', SkillSchema);
+const User = mongoose.model('user', UserSchema);
 
 module.exports = User;
