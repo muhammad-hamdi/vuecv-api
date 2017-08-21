@@ -17,6 +17,7 @@
   },
   "homepage": "https://gitlab.com/muhammad_hamdi/cv-api#README",
   "dependencies": {
-    "express": "^4.15.4"
+    "express": "^4.15.4",
+    "mongoose": "^4.11.7"
   }
 }
