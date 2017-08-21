@@ -1,0 +1,22 @@
+{
+  "name": "cv-api",
+  "version": "1.0.0",
+  "description": "an api for my cv",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/muhammad_hamdi/cv-api.git"
+  },
+  "author": "Muhammad Hamdi <prime.energy7@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/muhammad_hamdi/cv-api/issues"
+  },
+  "homepage": "https://gitlab.com/muhammad_hamdi/cv-api#README",
+  "dependencies": {
+    "express": "^4.15.4"
+  }
+}
