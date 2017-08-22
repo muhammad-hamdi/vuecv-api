@@ -10,7 +10,7 @@ const User = require('../models/user');
 
 router.post('/login', function(req, res, next){
   User.findOne({
-    name: req.body.name
+    email: req.body.email
   }, function(err, user){
     if(err) throw err;
 
@@ -34,7 +34,7 @@ router.post('/login', function(req, res, next){
 router.use(function(req, res, next) {
 
   // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['Authorization'];
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
   // decode token
   if (token) {

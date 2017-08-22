@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
 
 const routes = require('./routes/api');
 
@@ -21,9 +20,6 @@ app.set('secretToken', config.secret);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-app.use(morgan('dev'));
-
 
 app.use('/api',routes);
 
