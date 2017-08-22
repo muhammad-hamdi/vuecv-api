@@ -31,38 +31,7 @@ router.post('/login', function(req, res, next){
   });
 });
 
-router.use('/users',function(req, res, next) {
-
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['Authorization'];
-
-  // decode token
-  if (token) {
-
-    // verifies secret and checks exp
-    jwt.verify(token, config.secret, function(err, decoded) {
-      if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
-
-  } else {
-
-    // if there is no token
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-    });
-
-  }
-});
-
-router.use('/skills',function(req, res, next) {
+var auth = function(req, res, next) {
 
   // check header or url parameters or post parameters for token
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -91,100 +60,17 @@ router.use('/skills',function(req, res, next) {
     });
 
   }
-});
+};
 
-router.use('/skills/:id',function(req, res, next) {
+router.use('/users', auth);
 
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+router.use('/skills', auth);
 
-  // decode token
-  if (token) {
+router.use('/skills/:id', auth);
 
-    // verifies secret and checks exp
-    jwt.verify(token, config.secret, function(err, decoded) {
-      if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
+router.use('/portfolio', auth);
 
-  } else {
-
-    // if there is no token
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-    });
-
-  }
-});
-
-router.use('/portfolio',function(req, res, next) {
-
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  // decode token
-  if (token) {
-
-    // verifies secret and checks exp
-    jwt.verify(token, config.secret, function(err, decoded) {
-      if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
-
-  } else {
-
-    // if there is no token
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-    });
-
-  }
-});
-
-router.use('/portfolio/:id',function(req, res, next) {
-
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  // decode token
-  if (token) {
-
-    // verifies secret and checks exp
-    jwt.verify(token, config.secret, function(err, decoded) {
-      if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' });
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
-
-  } else {
-
-    // if there is no token
-    // return an error
-    return res.status(403).send({
-        success: false,
-        message: 'No token provided.'
-    });
-
-  }
-});
+router.use('/portfolio/:id', auth);
 
 router.get('/users', function(req, res, next){
   User.find({})
@@ -199,6 +85,13 @@ router.post('/users', function(req, res, next){
       res.send(data)
     });
 });
+
+router.get('/users/:id', function(req, res, next){
+  User.findById({_id: req.params.id})
+    .then((data) => {
+      res.send(data);
+    })
+})
 
 router.patch('/users/:id', function(req, res, next){
   User.findByIdAndUpdate({_id:req.params.id}, req.body)
