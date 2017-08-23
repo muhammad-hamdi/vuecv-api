@@ -4,9 +4,22 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 const config = require('../config');
+const User = require('../models/user');
 const Skill = require('../models/skills');
 const Work = require('../models/portfolio');
-const User = require('../models/user');
+
+router.post('/register', function(req,res, next){
+  User.create(req.body)
+    .then((user) => {
+      var token = jwt.sign(user, config.secret);
+      res.json({
+        success: true,
+        message: 'Token Sent',
+        token: token,
+        id: user._id
+      });
+    });
+})
 
 router.post('/login', function(req, res, next){
   User.findOne({
@@ -80,78 +93,79 @@ router.get('/users', function(req, res, next){
     });
 });
 
-router.post('/users', function(req, res, next){
-  User.create(req.body)
+router.get('/user/:id', function(req, res, next){
+  User.findById({_id: req.params.id})
     .then((data) => {
-      res.send(data)
+      res.send(data);
+    })
+});
+
+router.patch('/user/:id', function(req, res, next){
+  User.findByIdAndUpdate(req.params.id, req.body)
+    .then((data) => {
+      res.send(data);
     });
 });
 
-router.get('/users/:id', function(req, res, next){
-  User.findById({_id: req.params.id})
+router.delete('/user/:id', function(req, res, next){
+  User.findByIdAndRemove(req.params.id)
     .then((data) => {
       res.send(data);
     })
 })
 
-router.patch('/users/:id', function(req, res, next){
-  User.findByIdAndUpdate({_id:req.params.id}, req.body)
+router.get('/user/:id/skills', function(req, res, next){
+  Skill.find({user_id: req.params.id})
     .then((data) => {
       res.send(data);
-    });
+    })
 });
 
-router.get('/skills', function(req, res, next){
-  Skill.find({})
-    .then((data) => {
-      res.send(data);
-    });
-});
-
-router.post('/skills', function(req, res, next){
+router.post('/user/skills', function(req, res, next){
   Skill.create(req.body)
     .then((data) => {
       res.send(data);
     })
 });
 
-router.patch('/skills/:id', function(req, res, next){
-  Skill.findByIdAndUpdate({_id: req.params.id})
+router.patch('/user/skills/:id', function(req, res, next){
+  Skill.findByIdAndUpdate(req.params.id, req.body)
     .then((data) => {
       res.send(data);
     })
 });
 
-router.delete('/skills/:id', function(req, res, next){
-  Skill.findByIdAndDelete({_id: req.params.id})
+router.delete('/user/skills/:id', function(req, res, next){
+  Skill.findByIdAndRemove(req.params.id)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => console.log(err));
+});
+
+router.get('/user/:id/portfolio', function(req, res, next){
+  Work.find({user_id: req.params.id})
     .then((data) => {
       res.send(data);
     })
 });
 
-router.get('/portfolio', function(req, res, next){
-  Work.find({})
-    .then((data) => {
-      res.send(data);
-    });
-});
-
-router.post('/portfolio', function(req, res, next){
+router.post('/user/portfolio', function(req, res, next){
   Work.create(req.body)
     .then((data) => {
       res.send(data);
     });
 });
 
-router.patch('/portfolio/:id', function(req, res, next){
-  Work.findByIdAndUpdate({_id: req.params.id})
+router.patch('/user/portfolio/:id', function(req, res, next){
+  Work.findByIdAndUpdate(req.params.id, req.body)
     .then((data) => {
       res.send(data);
     });
 });
 
-router.delete('/portfolio/:id', function(req, res, next){
-  Work.findByIdAndDelete({_id:req.params.id})
+router.delete('/user/portfolio/:id', function(req, res, next){
+  Work.findByIdAndRemove(req.params.id)
     .then((data) => {
       res.send(data);
     });

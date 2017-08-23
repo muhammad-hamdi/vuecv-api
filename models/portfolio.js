@@ -14,6 +14,10 @@ const WorkSchema = new Schema({
   image_url: {
     type: String,
     required: true
+  },
+  user_id: {
+    type: String,
+    required: true
   }
 });
 

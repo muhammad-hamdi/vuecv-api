@@ -10,6 +10,14 @@ const SkillSchema = new Schema({
   percent: {
     type: Number,
     required: true
+  },
+  image_url: {
+    type: String,
+    required: true
+  },
+  user_id: {
+    type: String,
+    required: true
   }
 });
 
