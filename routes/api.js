@@ -24,7 +24,8 @@ router.post('/login', function(req, res, next){
         res.json({
           success: true,
           message: 'Token Sent',
-          token: token
+          token: token,
+          id: user._id
         });
       }
     }
