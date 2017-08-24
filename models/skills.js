@@ -11,6 +11,10 @@ const SkillSchema = new Schema({
     type: Number,
     required: true
   },
+  category: {
+      type: String,
+      reuired: true
+  },
   image_url: {
     type: String,
     required: true
