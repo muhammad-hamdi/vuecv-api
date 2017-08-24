@@ -15,6 +15,14 @@ const WorkSchema = new Schema({
     type: String,
     required: true
   },
+  category: {
+    type: String,
+    required: true
+  },
+  link: {
+    type: String,
+    required: false
+  },
   user_id: {
     type: String,
     required: true
