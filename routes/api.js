@@ -7,6 +7,7 @@ const config = require('../config');
 const User = require('../models/user');
 const Skill = require('../models/skills');
 const Work = require('../models/portfolio');
+const Exp = require('../models/exp');
 
 router.post('/register', function(req,res, next){
   User.create(req.body)
@@ -85,6 +86,10 @@ router.use('/skills/:id', auth);
 router.use('/portfolio', auth);
 
 router.use('/portfolio/:id', auth);
+
+router.use('/exp', auth);
+
+router.use('/exp/:id', auth);
 
 router.get('/users', function(req, res, next){
   User.find({})
@@ -166,6 +171,32 @@ router.patch('/user/portfolio/:id', function(req, res, next){
 
 router.delete('/user/portfolio/:id', function(req, res, next){
   Work.findByIdAndRemove(req.params.id)
+    .then((data) => {
+      res.send(data);
+    });
+});
+
+router.get('/user/:id/exp', function(req, res, next){
+  Exp.find({user_id: req.params.id})
+    .then((data) => {
+      res.send(data);
+    })
+});
+
+router.post('/user/exp', function(req, res, next){
+  Exp.create(req.body)
+    .then((data) => {
+      res.send(data);
+    });
+});
+router.patch('user/exp/:id', function(req, res, next){
+    Exp.findByIdAndUpdate(req.params.id, req.body)
+        .then((data) => {
+            res.send(data);
+        });
+});
+router.delete('/user/exp/:id', function(req, res, next){
+  Exp.findByIdAndRemove(req.params.id)
     .then((data) => {
       res.send(data);
     });
