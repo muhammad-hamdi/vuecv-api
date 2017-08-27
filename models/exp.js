@@ -11,14 +11,6 @@ const ExpSchema = new Schema({
         type: String,
         required: false
     },
-    start_date: {
-        type: Date,
-        required: true
-    },
-    end_date: {
-        type: Date,
-        required: true
-    },
     role: {
         type: String,
         reuired: true

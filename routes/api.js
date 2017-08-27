@@ -189,11 +189,11 @@ router.post('/user/exp', function(req, res, next){
       res.send(data);
     });
 });
-router.patch('user/exp/:id', function(req, res, next){
-    Exp.findByIdAndUpdate(req.params.id, req.body)
-        .then((data) => {
-            res.send(data);
-        });
+router.patch('/user/exp/:id', function(req, res, next){
+  Exp.findByIdAndUpdate(req.params.id, req.body)
+    .then((data) => {
+      res.send(data);
+    });
 });
 router.delete('/user/exp/:id', function(req, res, next){
   Exp.findByIdAndRemove(req.params.id)
