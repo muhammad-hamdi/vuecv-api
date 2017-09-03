@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+var multer  = require('multer');
+const crypto = require('crypto');
 const app = express();
 
 const config = require('../config');
@@ -9,6 +11,34 @@ const User = require('../models/user');
 const Skill = require('../models/skills');
 const Work = require('../models/portfolio');
 const Exp = require('../models/exp');
+
+var storage = multer.diskStorage({
+  destination: './uploads/images/', // upload directory
+  filename: function (req, file, cb) { // create random name for the new file
+    crypto.randomBytes(16, function (err, raw) {
+      if (err) return cb(err)
+      cb(null, raw.toString('hex') + path.extname(file.originalname))
+    })
+  }
+})
+var upload = multer({ storage: storage })
+
+router.post('/uploads', upload.single('avatar'), function(req, res, next){
+    if (!req.file) {
+    console.log("No file received");
+    return res.send({
+      success: false
+    });
+
+  } else {
+    console.log('file received');
+    const host = req.host;
+    const filePath = req.protocol + "://" + host + '/' + req.file.path;
+    return res.send({
+      success: true
+    })
+  }
+})
 
 router.post('/register', function(req,res, next){
   User.create(req.body)
