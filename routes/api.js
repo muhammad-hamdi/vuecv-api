@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const app = express();
 
 const config = require('../config');
@@ -90,6 +91,27 @@ router.use('/portfolio/:id', auth);
 router.use('/exp', auth);
 
 router.use('/exp/:id', auth);
+
+router.get('/data/:id', function(req, res, next){
+    Promise.all([User.findById({_id: req.params.id}),
+                 Skill.find({user_id: req.params.id}),
+                 Work.find({user_id: req.params.id}),
+                 Exp.find({user_id: req.params.id})
+             ])
+             .then(data => {
+                 let userData = data[0];
+                 let userSkills = data[1];
+                 let userWorks = data[2];
+                 let userExp = data[3];
+
+                 res.json({
+                     user: userData,
+                     skills: userSkills,
+                     works: userWorks,
+                     exp: userExp
+                 })
+             })
+});
 
 router.get('/users', function(req, res, next){
   User.find({})
@@ -202,4 +224,68 @@ router.delete('/user/exp/:id', function(req, res, next){
     });
 });
 
+router.post('/email', function(req, res){
+    var transporter = nodemailer.createTransport({
+		service: 'Gmail',
+		auth: {
+			user: 'mycvcontact123@gmail.com',
+			pass: 'web contact'
+		},
+	    tls: {
+	        rejectUnauthorized: false
+	    }
+	});
+    var mailOptions = {
+		from: req.body.name+'<'+req.body.senderEmail+'>',
+		to: req.body.userEmail,
+		subject: 'CV Contact Form',
+		text: 'You have a new message!',
+		html: `
+			<div style='
+                width: 50%;
+                background-color: rgba(238, 238, 238, 0.3);
+                margin: auto;
+                position: relative;
+                padding-bottom: 20px;
+                box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+				'>
+				<h1 style='
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    margin: 0;
+                    background: #3498db;
+                    color: #FFF;
+                    padding: 10px;
+                    font-size: 15px;
+                '> You have a new message!</h1>
+				<ul>
+					<li style='margin: 2px auto;'><b>Sender Name:</b> &nbsp;`+req.body.name+`</li>
+                    <li style='margin: 2px auto;'><b>Sender Email:</b> &nbsp;`+req.body.senderEmail+`</li>
+					<li style='margin: 2px auto;'><b>Sender Email:</b> &nbsp;`+req.body.subject+`</li>
+					<li style='margin: 2px auto;'><b>Sender Message is below:</li>
+				</ul>
+                <p style='
+                    background: #FFF;
+                    padding: 5px 10px;
+                    border: 1px solid #EEE;
+                    width: 85%;
+                    margin: auto;
+                '>
+                    `+req.body.message+`
+                </p>
+
+			</div>
+		`
+	};
+    transporter.sendMail(mailOptions, function(error, info){
+		if (error) {
+			console.log('___Error: => '+ error);
+			res.redirect('/contact');
+		}else{
+			console.log('Message Sent! ' + info.response);
+		}
+	})
+});
 module.exports = router;
