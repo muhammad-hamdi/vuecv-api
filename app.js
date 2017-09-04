@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use('/api',routes);
+app.use('/uploads',express.static('uploads'));
 
 app.listen(port, function(){
   console.log('Server listening on port ' + port);

@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-var multer  = require('multer');
+const multer  = require('multer');
 const crypto = require('crypto');
+const path = require('path');
+const fs = require('fs');
 const app = express();
+const port = process.env.port || 4000;
 
 const config = require('../config');
 const User = require('../models/user');
@@ -13,8 +16,8 @@ const Work = require('../models/portfolio');
 const Exp = require('../models/exp');
 
 var storage = multer.diskStorage({
-  destination: './uploads/images/', // upload directory
-  filename: function (req, file, cb) { // create random name for the new file
+  destination: './uploads/images/',
+  filename: function (req, file, cb) {
     crypto.randomBytes(16, function (err, raw) {
       if (err) return cb(err)
       cb(null, raw.toString('hex') + path.extname(file.originalname))
@@ -23,7 +26,7 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-router.post('/uploads', upload.single('avatar'), function(req, res, next){
+router.post('/uploads/:id', upload.single('file'), function(req, res, next){
     if (!req.file) {
     console.log("No file received");
     return res.send({
@@ -32,11 +35,28 @@ router.post('/uploads', upload.single('avatar'), function(req, res, next){
 
   } else {
     console.log('file received');
-    const host = req.host;
-    const filePath = req.protocol + "://" + host + '/' + req.file.path;
+    const host = req.hostname;
+    const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
+    console.log(filePath);
+    User.findByIdAndUpdate(req.params.id, {'image': filePath})
+      .then((data) => {
+        res.send(data);
+      });
+  }
+})
+
+router.post('/uploads/works/', upload.single('file'), function(req, res, next){
+    if (!req.file) {
+    console.log("No file received");
     return res.send({
-      success: true
-    })
+      success: false
+    });
+
+  } else {
+    console.log('file received');
+    const host = req.hostname;
+    const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
+    console.log(filePath);
   }
 })
 

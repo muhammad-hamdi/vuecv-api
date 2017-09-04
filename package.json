@@ -21,6 +21,7 @@
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
     "express": "^4.15.4",
+    "express-formidable": "^1.0.0",
     "jsonwebtoken": "^7.4.3",
     "jwt-decode": "^2.2.0",
     "mongoose": "^4.11.7",
