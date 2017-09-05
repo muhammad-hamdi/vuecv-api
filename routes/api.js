@@ -45,21 +45,6 @@ router.post('/uploads/:id', upload.single('file'), function(req, res, next){
   }
 })
 
-router.post('/uploads/works/', upload.single('file'), function(req, res, next){
-    if (!req.file) {
-    console.log("No file received");
-    return res.send({
-      success: false
-    });
-
-  } else {
-    console.log('file received');
-    const host = req.hostname;
-    const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
-    console.log(filePath);
-  }
-})
-
 router.post('/register', function(req,res, next){
   User.create(req.body)
     .then((user) => {
@@ -227,11 +212,38 @@ router.get('/user/:id/portfolio', function(req, res, next){
     })
 });
 
-router.post('/user/portfolio', function(req, res, next){
-  Work.create(req.body)
-    .then((data) => {
-      res.send(data);
-    });
+router.post('/user/portfolio', upload.single('file'), function(req, res, next){
+  if (!req.file) {
+  console.log("No file received");
+  return res.status(403).send({
+    success: false
+  });
+
+} else {
+  console.log('file received');
+  const host = req.hostname;
+  const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
+  console.log(filePath);
+  let newWork = new Work({
+    name: req.body.name,
+    category: req.body.category,
+    link: req.body.link,
+    description: req.body.description,
+    user_id: req.body.user_id,
+    image_url: filePath,
+  })
+  console.log(newWork);
+  newWork.save((err, work) => {
+    if(err){
+      res.json({
+        success: false,
+        message: err
+      })
+    } else {
+      res.send(work);
+    }
+  })
+}
 });
 
 router.patch('/user/portfolio/:id', function(req, res, next){
