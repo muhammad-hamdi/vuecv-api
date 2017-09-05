@@ -220,6 +220,7 @@ router.post('/user/portfolio', upload.single('file'), function(req, res, next){
   });
 
 } else {
+  console.log(req.body);
   console.log('file received');
   const host = req.hostname;
   const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
