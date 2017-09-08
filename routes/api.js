@@ -183,11 +183,24 @@ router.get('/user/:id/skills', function(req, res, next){
     })
 });
 
-router.post('/user/skills', function(req, res, next){
-  Skill.create(req.body)
-    .then((data) => {
-      res.send(data);
-    })
+router.post('/user/skills', upload.single('file'), function(req, res, next){
+    if (!req.file) {
+    console.log("No file received");
+    return res.send({
+      success: false
+    });
+
+  } else {
+    console.log('file received');
+    const host = req.hostname;
+    const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
+    console.log(filePath);
+    console.log(req.body);
+    // Skill.create(req.body)
+    //   .then((data) => {
+    //     res.send(data);
+    //   })
+  }
 });
 
 router.patch('/user/skills/:id', function(req, res, next){
