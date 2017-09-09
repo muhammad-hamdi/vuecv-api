@@ -14,6 +14,7 @@ const User = require('../models/user');
 const Skill = require('../models/skills');
 const Work = require('../models/portfolio');
 const Exp = require('../models/exp');
+const Goal = require('../models/goal');
 
 var storage = multer.diskStorage({
   destination: './uploads/images/',
@@ -127,6 +128,10 @@ router.use('/exp', auth);
 
 router.use('/exp/:id', auth);
 
+router.use('/goal', auth);
+
+router.use('/goal/:id', auth);
+
 router.get('/data/:id', function(req, res, next){
     Promise.all([User.findById({_id: req.params.id}),
                  Skill.find({user_id: req.params.id}),
@@ -196,10 +201,24 @@ router.post('/user/skills', upload.single('file'), function(req, res, next){
     const filePath = req.protocol + "://" + host+':'+ port + '/' + req.file.path;
     console.log(filePath);
     console.log(req.body);
-    // Skill.create(req.body)
-    //   .then((data) => {
-    //     res.send(data);
-    //   })
+    let newSkill = new Skill({
+        name: req.body.name,
+        category: req.body.category,
+        percent: req.body.percent,
+        user_id: req.body.user_id,
+        image_url: filePath
+    });
+    console.log(newSkill);
+    newSkill.save((err, skill) => {
+        if (err){
+            res.json({
+                success: false,
+                message: err
+            })
+        } else {
+            res.send(skill);
+        }
+    })
   }
 });
 
@@ -295,6 +314,32 @@ router.patch('/user/exp/:id', function(req, res, next){
 });
 router.delete('/user/exp/:id', function(req, res, next){
   Exp.findByIdAndRemove(req.params.id)
+    .then((data) => {
+      res.send(data);
+    });
+});
+
+router.get('/user/:id/goal', function(req, res, next){
+  Goal.find({user_id: req.params.id})
+    .then((data) => {
+      res.send(data);
+    })
+});
+
+router.post('/user/goal', function(req, res, next){
+  Goal.create(req.body)
+    .then((data) => {
+      res.send(data);
+    });
+});
+router.patch('/user/goal/:id', function(req, res, next){
+  Goal.findByIdAndUpdate(req.params.id, req.body)
+    .then((data) => {
+      res.send(data);
+    });
+});
+router.delete('/user/goal/:id', function(req, res, next){
+  Goal.findByIdAndRemove(req.params.id)
     .then((data) => {
       res.send(data);
     });
