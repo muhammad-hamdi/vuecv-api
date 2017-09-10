@@ -136,19 +136,22 @@ router.get('/data/:id', function(req, res, next){
     Promise.all([User.findById({_id: req.params.id}),
                  Skill.find({user_id: req.params.id}),
                  Work.find({user_id: req.params.id}),
-                 Exp.find({user_id: req.params.id})
+                 Exp.find({user_id: req.params.id}),
+                 Goal.find({user_id: req.params.id})
              ])
              .then(data => {
                  let userData = data[0];
                  let userSkills = data[1];
                  let userWorks = data[2];
                  let userExp = data[3];
+                 let userGoals = data[4];
 
                  res.json({
                      user: userData,
                      skills: userSkills,
                      works: userWorks,
-                     exp: userExp
+                     exp: userExp,
+                     goals: userGoals
                  })
              })
 });
